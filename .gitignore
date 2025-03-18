@@ -1,0 +1,19 @@
+.DS_Store
+
+# Ignore build outputs
+*.jou
+*.log
+*.str
+*.pb
+*.xil
+*.lock
+*.wdb
+*.dmp
+
+*.Xil/
+*.sim/
+*.runs/
+*.hw/
+*.tmp/
+*.cache/
+*.ip_user_files/
