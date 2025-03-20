@@ -20,6 +20,7 @@
 
 
 library IEEE;
+library xil_defaultlib;
 use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
@@ -31,13 +32,33 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity clock_div_testbench is
+entity clock_div_testbench is   
 --  Port ( );
 end clock_div_testbench;
 
 architecture Behavioral of clock_div_testbench is
-
+    signal clk_in : std_logic;
+    signal clk_out : std_logic;
+    signal reset : std_logic;
 begin
+     cd: entity xil_defaultlib.clock_divider port map (
+        reset => reset,
+        clk_in => clk_in,
+        clk_out => clk_out
+     );
 
-
+    process
+    begin
+        reset <= '1';
+        wait for 50ns;
+        reset <= '0';
+        wait for 50ns;
+    
+        while true loop
+            clk_in <= '0';
+            wait for 25ns;
+            clk_in <= '1';
+            wait for 25ns;
+        end loop;
+    end process;
 end Behavioral;
