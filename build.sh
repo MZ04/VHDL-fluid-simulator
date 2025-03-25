@@ -4,6 +4,19 @@
 # everything is optional except for the testbench name
 # you can also use the -c flag to remove the generated build files
 
+# Function to display help message
+function display_help() {
+  echo "Usage: $0 <testbench_name> [options]"
+  echo "Arguments:"
+  echo "   -a, --analyze              Only analyzes the source files and exit"
+  echo "   -c, --clear, --clean       Clean the build directory and exit (this does not require a testbench_name)"
+  echo "   --sources <dir>            Specify the source directory (default: $SRC_DIR)"
+  echo "   --sim <dir>                Specify the simulation directory (default: $SIM_DIR)"
+  echo "   -t, --time <time>          Specify the simulation time (default: $SIMULATION_TIME)"
+  echo "   -h, --help                 Display this help message and exit"
+  echo "To be able to run this script correctly you will need gtkwave and ghdl installed!"
+}
+
 # DEFAULT VALUES
 SRC_DIR="hw/src/rtl"
 SIM_DIR="hw/src/tb"
@@ -53,25 +66,12 @@ while [[ $# -gt 0 ]]; do
       fi
       ;;
     -h|--help)
-      echo "Usage: $0 <testbench_name> [options]"
-      echo "Arguments:"
-      echo "   -a, --analyze              Only analyzes the source files and exit"
-      echo "   -c, --clear, --clean       Clean the build directory and exit (this does not required a testbench_name)"
-      echo "   --sources <dir>            Specify the source directory (default: $SRC_DIR)"
-      echo "   --sim <dir>                Specify the simulation directory (default: $SIM_DIR)"
-      echo "   -t, --time <time>          Specify the simulation time (default: $SIMULATION_TIME)"
-      echo "   -h, --help                 Display this help message and exit"
+      display_help
       exit 0
       ;;
     -*)
       echo "Unknown option: $1"
-      echo "Usage: $0 <testbench_name> [options]"
-      echo "Arguments:"
-      echo "   -c, --clear, --clean       Clean the build directory and exit (this does not required a testbench_name)"
-      echo "   --sources <dir>            Specify the source directory (default: $SRC_DIR)"
-      echo "   --sim <dir>                Specify the simulation directory (default: $SIM_DIR)"
-      echo "   -t, --time <time>          Specify the simulation time (default: $SIMULATION_TIME)"
-      echo "   -h, --help                 Display this help message and exit"
+      display_help
       exit 1
       ;;
     *)
