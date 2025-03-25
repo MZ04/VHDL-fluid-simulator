@@ -50,15 +50,15 @@ begin
     process
     begin
         reset <= '1';
-        wait for 50ns;
+        wait for 50 ns;
         reset <= '0';
-        wait for 50ns;
+        wait for 5 ns;
     
         while true loop
             clk_in <= '0';
-            wait for 25ns;
+            wait for 25 ns;
             clk_in <= '1';
-            wait for 25ns;
+            wait for 25 ns;
         end loop;
     end process;
 end Behavioral;

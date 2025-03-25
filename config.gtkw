@@ -1,0 +1,21 @@
+[timestart] 0
+[size] 1344 600
+[pos] -1 -1
+*-28.000000 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] top.
+[treeopen] top.clock_div_testbench.
+[sst_width] 255
+[signals_width] 87
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@28
+top.clock_div_testbench.cd.tmp
+@420
+top.clock_div_testbench.cd.count
+@28
+top.clock_div_testbench.cd.clk_out
+top.clock_div_testbench.cd.clk_in
+@29
+top.clock_div_testbench.cd.reset
+[pattern_trace] 1
+[pattern_trace] 0
