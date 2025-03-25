@@ -14,6 +14,10 @@
 *.sim/
 *.runs/
 *.hw/
-*.tmp/
 *.cache/
-*.ip_user_files/
+
+sim/
+*.o
+*.ghw
+bitstreams/*.bit
+bitstreams/*.bin
