@@ -1,5 +1,5 @@
 # Set project variables
-set proj_name "fpga_project"
+set proj_name "fluid-simulator"
 set fpga_part "xc7a200tfbg676-2"
 set src_dir [file normalize "./hw/src/rtl"]
 set tb_dir  [file normalize "./hw/src/tb"]
@@ -20,6 +20,11 @@ foreach vhd_file [glob -nocomplain -directory $tb_dir *.vhd] {
 }
 
 # Load constraints
-source ./hw/tcl/constraints.tcl
+source ./scripts/tcl/constraints.tcl
+
+# Sets top module
+set_property top fsm [current_fileset]
 
 puts "Project setup complete."
+
+start_gui

@@ -9,7 +9,7 @@ current_hw_device $fpga_device
 refresh_hw_device -update_hw_probes false $fpga_device
 
 # Load bitstream
-set bitfile "./hw/bitstreams/top.bit"
+set bitfile "./hw/bitstreams/fsm.bit"
 if {![file exists $bitfile]} {
     puts "Error: Bitstream file not found!"
     exit 1
