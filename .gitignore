@@ -17,7 +17,7 @@
 *.cache/
 
 sim/
-build/
+out/
 *.o
 *.ghw
 bitstreams/*.bit

@@ -17,10 +17,17 @@ function display_help() {
   echo "To be able to run this script correctly you will need gtkwave and ghdl installed!"
 }
 
+function clean_build() {
+  echo "Cleaning build directory..."
+  rm -rf $BUILD_DIR
+  echo "Done."
+  exit 0
+}
+
 # DEFAULT VALUES
 SRC_DIR="hw/src/rtl"
 SIM_DIR="hw/src/tb"
-BUILD_DIR="./build"
+BUILD_DIR="out"
 SIMULATION_TIME=1ms
 ANALIZE_ONLY=false
 
@@ -33,10 +40,7 @@ while [[ $# -gt 0 ]]; do
       shift 1
       ;;
     -c|--clear|--clean)
-      echo "Cleaning build directory..."
-      rm -rf $BUILD_DIR
-      echo "Done."
-      exit 0
+      clean_build
       ;;
     --sources)
       if [ -n "$2" ]; then
@@ -88,7 +92,7 @@ done
 
 # Check if testbench name is provided
 if [ -z "$TESTBENCH_NAME" ]; then
-  echo "Usage: $0 <testbench_name> [options]"
+  display_help
   exit 1
 fi
 
@@ -101,13 +105,14 @@ echo "Simulation Time: $SIMULATION_TIME"
 
 # Create the build directory if it doesn't exist
 mkdir -p $BUILD_DIR
+mkdir -p $BUILD_DIR/bin
 
 # Change to the build directory
-cd $BUILD_DIR || exit 1
+# cd $BUILD_DIR/bin || exit 1
 
 # Analyze VHDL source files
 echo "Analyzing VHDL source files..."
-ghdl -a --work=xil_defaultlib ../$SRC_DIR/*.vhd
+ghdl -a --workdir="$BUILD_DIR/bin" --work=xil_defaultlib ./$SRC_DIR/*.vhd 
 if [ $? -ne 0 ]; then
   echo "Error during source analysis."
   exit 1
@@ -115,7 +120,7 @@ fi
 
 # Analyze VHDL testbench files
 echo "Analyzing VHDL testbench files..."
-ghdl -a ../$SIM_DIR/$TESTBENCH_NAME.vhd
+ghdl -a -P$BUILD_DIR/bin --workdir="$BUILD_DIR/bin" ./$SIM_DIR/$TESTBENCH_NAME.vhd
 if [ $? -ne 0 ]; then
   echo "Error during testbench analysis."
   exit 1
@@ -124,30 +129,32 @@ fi
 # Exit + Clear if only analyze 
 if [ "$ANALIZE_ONLY" = true ]; then
   echo "Analysis completed successfully."
-  cd ../
-  rm -rf $BUILD_DIR
-  exit 0
+  clean_build
 fi
 
 # Elaborate the project
 echo "Elaborating the project..."
-ghdl -e $TESTBENCH_NAME
+ghdl -e -P$BUILD_DIR/bin --workdir="$BUILD_DIR/bin" -o "$BUILD_DIR/bin/$TESTBENCH_NAME" $TESTBENCH_NAME
 if [ $? -ne 0 ]; then
   echo "Error during elaboration."
   exit 1
 fi
 
+cd $BUILD_DIR/bin || exit 1
+
 # Run the simulation
 echo "Running the simulation..."
-ghdl -r $TESTBENCH_NAME --wave=wave.ghw --stop-time=$SIMULATION_TIME
+ghdl -r $TESTBENCH_NAME --wave="../wave.ghw" --stop-time=$SIMULATION_TIME
 if [ $? -ne 0 ]; then
   echo "Error during simulation."
   exit 1
 fi
 
+cd ../..
+
 # Open the simulation in GTKWave
 echo "Opening simulation in GTKWave..."
-gtkwave wave.ghw ../config.gtkw
+gtkwave ./$BUILD_DIR/wave.ghw ./config.gtkw
 if [ $? -ne 0 ]; then
   echo "Error opening GTKWave."
   exit 1
