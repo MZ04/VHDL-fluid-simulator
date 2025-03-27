@@ -1,4 +1,6 @@
 Repository del progetto di Reti Logiche anno 2024/2025.
+
+by:
 Marco Zanatta - Andrea Pollini - Daniele De Marco - Mattia Pistollato
 
 # VHDL-fluid-simulator
