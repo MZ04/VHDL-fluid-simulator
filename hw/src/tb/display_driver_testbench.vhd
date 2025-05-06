@@ -78,6 +78,7 @@ begin
             temp(2*i) := '0';
             temp(2*i+1) := '1';
         end loop;
+        
         processed_frame <= temp;
         wait;
     end process;
@@ -85,7 +86,7 @@ begin
     set_frame_ready : process
     begin 
         frame_ready <= '0';
-        wait for 50 ns;
+        wait for 100 ns;
         frame_ready <= '1';
         wait;
     end process;

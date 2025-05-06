@@ -42,8 +42,8 @@ entity display_driver is
 end display_driver;
 
 architecture Behavioral of display_driver is
-    signal frame_buffer: std_logic_vector (511 downto 0);
-    signal buffer_drawn : std_logic;
+    signal frame_buffer: std_logic_vector (511 downto 0) := (others => '0');
+    signal buffer_drawn : std_logic := '0';
     type state is (
         idle,
         tbrf_tsesu,
@@ -53,7 +53,11 @@ architecture Behavioral of display_driver is
         tbrb,
         tcke,
         add_clock_2
-    );
+        );
+    signal current_state : state := idle;
+    signal pixel_count : integer := 0;
+    signal row_count : integer := 0; 
+    signal debug_count : integer := 0;
     begin
         
     -- Select is set as high since we are feeding the display with data    
@@ -62,6 +66,7 @@ architecture Behavioral of display_driver is
     -- New frame is loaded in the buffer
     process (frame_ready, buffer_drawn)
     begin
+        copy_done <= '0';
         if (frame_ready = '1' and buffer_drawn = '0') then 
             frame_buffer <= processed_frame;
             buffer_drawn <= '1';
@@ -71,10 +76,6 @@ architecture Behavioral of display_driver is
     
     --New frame is displayed in the matrix
     process (clk_in, reset_in)
-        variable debug_count : integer := 0;
-        variable pixel_count : integer := 0;
-        variable row_count : integer := 0; 
-        variable current_state : state := idle;
     begin
         --Signals which are set by default
         clk_out <= '0'; 
@@ -83,7 +84,7 @@ architecture Behavioral of display_driver is
 
         --reset_in needs to be asynchronous
         if (reset_in = '1') then
-            current_state := idle;
+            current_state <= idle;
             buffer_drawn <= '0';
         end if;
 
@@ -91,65 +92,66 @@ architecture Behavioral of display_driver is
         if (rising_edge(clk_in)) then
             case current_state is 
             when idle => --Initial state
-                debug_count := 0;
+                debug_count <= 0;
                 reset_display <= '1';
                 if (buffer_drawn = '1') then
-                    current_state := tbrf_tsesu;
+                    current_state <= tbrf_tsesu;
                 end if; 
 
             when tbrf_tsesu => --Defined for   
-                debug_count := debug_count + 1;
+                debug_count <= debug_count + 1;
                 if (debug_count = 140) then
-                    current_state := first_led;
-                    debug_count := 0;
+                    current_state <= first_led;
+                    debug_count <= 0;
                 end if;
 
             when first_led =>
                 red_data <= frame_buffer((row_count * 32) + pixel_count);
                 green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
-                pixel_count := pixel_count + 2;
-                current_state := fill_row;
+                pixel_count <= pixel_count + 2;
+                current_state <= fill_row;
 
             when fill_row => 
                 clk_out <= '1';
-                if (pixel_count > 28) then 
-                    current_state := add_clock;
-                    pixel_count := 0;
+                if (pixel_count >= 32) then 
+                    current_state <= add_clock;
+                    pixel_count <= 0;
                 end if; 
 
             when add_clock =>
                 clk_out <= '1';
-                row_count := row_count + 1;
+                row_count <= row_count + 1;
                 if (row_count = 16) then 
-                    current_state := add_clock_2;
+                    current_state <= add_clock_2;
                 else 
-                    current_state := tbrb;
+                    current_state <= tbrb;
                 end if; 
 
             when tbrb => 
-                debug_count := debug_count + 1;
+                debug_count <= debug_count + 1;
                 if (debug_count = 88) then 
-                    debug_count := 0;
-                    current_state := tcke;
+                    debug_count <= 0;
+                    current_state <= tcke;
                 end if;
 
             when tcke =>
                 bright <= '1';
-                debug_count := debug_count + 1;
+                debug_count <= debug_count + 1;
                 if (debug_count = 99) then -- TODO: Insert value based on an estimation
-                    debug_count := 0;
-                    current_state := idle;
+                    debug_count <= 0;
+                    current_state <= idle;
                 end if;
 
             when add_clock_2 =>
                 clk_out <= '1';
-                current_state := idle;
+                current_state <= idle;
+                buffer_drawn <= '0';
             end case;
         else 
             if (current_state = fill_row) then 
-                red_data <= frame_buffer((row_count * 16) + pixel_count);
-                green_data <= frame_buffer((row_count * 16) + pixel_count + 1);
-                pixel_count := pixel_count + 2;
+                red_data <= frame_buffer((row_count * 32) + pixel_count);
+                green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
+                pixel_count <= pixel_count + 2;
             end if;
         end if;    
     end process;
