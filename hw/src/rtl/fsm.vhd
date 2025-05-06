@@ -1,35 +1,14 @@
 ----------------------------------------------------------------------------------
--- Company: 
+-- Team: LedMatrixGroup
 -- Engineer: 
 -- 
--- Create Date: 03/18/2025 03:21:57 PM
--- Design Name: 
--- Module Name: fsm - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Create Date: 03/13/2025 04:43:41 PM
+-- Module Name: display_driver - Behavioral
 ----------------------------------------------------------------------------------
 
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity fsm is
 --  Port ( );
