@@ -75,8 +75,8 @@ begin
         variable temp : std_logic_vector (511 downto 0);
     begin 
         for i in 0 to 255 loop
-            temp(2*i) := '0';
-            temp(2*i+1) := '1';
+            temp(2*i) := '1';
+            temp(2*i+1) := '0';
         end loop;
         
         processed_frame <= temp;

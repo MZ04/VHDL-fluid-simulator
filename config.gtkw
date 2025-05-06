@@ -1,21 +1,31 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue May  6 14:24:21 2025
+[*]
+[dumpfile] "/home/zanatta/Documents/University/Logic_Networks/VHDL-fluid-simulator/out/wave.ghw"
+[dumpfile_mtime] "Tue May  6 14:22:49 2025"
+[dumpfile_size] 366253
+[savefile] "/home/zanatta/Documents/University/Logic_Networks/VHDL-fluid-simulator/config.gtkw"
 [timestart] 0
-[size] 1344 600
-[pos] -1 -1
-*-28.000000 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[size] 1912 994
+[pos] -959 -1
+*-28.000000 181000000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [treeopen] top.
-[treeopen] top.clock_div_testbench.
+[treeopen] top.display_driver_testbench.
 [sst_width] 255
-[signals_width] 87
+[signals_width] 216
 [sst_expanded] 1
 [sst_vpaned_height] 159
 @28
-top.clock_div_testbench.cd.tmp
+top.display_driver_testbench.dd.buffer_drawn
+top.display_driver_testbench.dd.green_data
+top.display_driver_testbench.dd.clk_out
+top.display_driver_testbench.dd.copy_done
+top.display_driver_testbench.dd.red_data
 @420
-top.clock_div_testbench.cd.count
-@28
-top.clock_div_testbench.cd.clk_out
-top.clock_div_testbench.cd.clk_in
-@29
-top.clock_div_testbench.cd.reset
+top.display_driver_testbench.dd.current_state
+top.display_driver_testbench.dd.pixel_count
+top.display_driver_testbench.dd.row_count
+top.display_driver_testbench.dd.debug_count
 [pattern_trace] 1
 [pattern_trace] 0

@@ -43,7 +43,7 @@ end display_driver;
 
 architecture Behavioral of display_driver is
     signal frame_buffer: std_logic_vector (511 downto 0) := (others => '0');
-    signal buffer_drawn : std_logic := '0';
+    signal buffer_drawn : std_logic := '1';
     type state is (
         idle,
         tbrf_tsesu,
@@ -62,39 +62,34 @@ architecture Behavioral of display_driver is
         
     -- Select is set as high since we are feeding the display with data    
     select_out <= '1';
-
-    -- New frame is loaded in the buffer
-    process (frame_ready, buffer_drawn)
-    begin
-        copy_done <= '0';
-        if (frame_ready = '1' and buffer_drawn = '0') then 
-            frame_buffer <= processed_frame;
-            buffer_drawn <= '1';
-            copy_done <= '1'; -- When the processed frame is copied in the buffer the system that calculates the following frame is notified
-        end if;
-    end process;
     
     --New frame is displayed in the matrix
-    process (clk_in, reset_in)
+    process (clk_in, reset_in, frame_ready)
     begin
         --Signals which are set by default
         clk_out <= '0'; 
         bright <= '0';
         reset_display <= '0';
+        copy_done <= '0';
+
+        if (frame_ready = '1' and buffer_drawn = '1') then 
+            frame_buffer <= processed_frame;
+            buffer_drawn <= '0';
+            copy_done <= '1'; -- When the processed frame is copied in the buffer the system that calculates the following frame is notified
+        end if;
 
         --reset_in needs to be asynchronous
         if (reset_in = '1') then
             current_state <= idle;
-            buffer_drawn <= '0';
+            buffer_drawn <= '1';
         end if;
-
 
         if (rising_edge(clk_in)) then
             case current_state is 
             when idle => --Initial state
                 debug_count <= 0;
                 reset_display <= '1';
-                if (buffer_drawn = '1') then
+                if (buffer_drawn = '0') then
                     current_state <= tbrf_tsesu;
                 end if; 
 
@@ -106,21 +101,21 @@ architecture Behavioral of display_driver is
                 end if;
 
             when first_led =>
-                red_data <= frame_buffer((row_count * 32) + pixel_count);
-                green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
-                pixel_count <= pixel_count + 2;
-                current_state <= fill_row;
+                    red_data <= frame_buffer((row_count * 32) + pixel_count);
+                    green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
+                    pixel_count <= pixel_count + 2;
+                    current_state <= fill_row;
 
             when fill_row => 
                 clk_out <= '1';
                 if (pixel_count >= 32) then 
                     current_state <= add_clock;
                     pixel_count <= 0;
+                    row_count <= row_count + 1;
                 end if; 
 
             when add_clock =>
                 clk_out <= '1';
-                row_count <= row_count + 1;
                 if (row_count = 16) then 
                     current_state <= add_clock_2;
                 else 
@@ -139,19 +134,20 @@ architecture Behavioral of display_driver is
                 debug_count <= debug_count + 1;
                 if (debug_count = 99) then -- TODO: Insert value based on an estimation
                     debug_count <= 0;
-                    current_state <= idle;
+                    current_state <= first_led;
                 end if;
 
             when add_clock_2 =>
                 clk_out <= '1';
                 current_state <= idle;
-                buffer_drawn <= '0';
+                buffer_drawn <= '1';
+                row_count <= 0;
             end case;
         else 
             if (current_state = fill_row) then 
-                red_data <= frame_buffer((row_count * 32) + pixel_count);
-                green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
-                pixel_count <= pixel_count + 2;
+                    red_data <= frame_buffer((row_count * 32) + pixel_count);
+                    green_data <= frame_buffer((row_count * 32) + pixel_count + 1);
+                    pixel_count <= pixel_count + 2;
             end if;
         end if;    
     end process;
